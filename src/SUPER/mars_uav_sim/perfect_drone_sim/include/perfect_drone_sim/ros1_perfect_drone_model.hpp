@@ -50,7 +50,7 @@ namespace perfect_drone {
             robot_pub_ = nh_.advertise<visualization_msgs::Marker>("robot", 100);
             path_pub_ = nh_.advertise<nav_msgs::Path>("path", 100);
             local_pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/cloud_registered", 100);
-            global_pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/global_pc", 100);
+            //global_pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/global_pc", 100);
             vel_pub_ = nh_.advertise<visualization_msgs::Marker>("vel_text", 100);
 
             position_ = cfg_.init_pos;
@@ -61,7 +61,7 @@ namespace perfect_drone {
             odom_.header.frame_id = "world";
             odom_pub_timer_ = nh_.createTimer(ros::Duration(0.01), &PerfectDrone::publishOdom, this);
 
-            global_pc_pub_timer_ = nh_.createTimer(ros::Duration(0.001), &PerfectDrone::publishGlobalPC, this);
+            //global_pc_pub_timer_ = nh_.createTimer(ros::Duration(0.001), &PerfectDrone::publishGlobalPC, this);
             path_.poses.clear();
             path_.header.frame_id = "world";
             path_.header.stamp = ros::Time::now();

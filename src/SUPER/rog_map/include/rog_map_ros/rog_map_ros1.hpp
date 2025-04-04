@@ -290,7 +290,7 @@ namespace rog_map {
 
         ROGMapROS(const ros::NodeHandle& nh, const std::string& cfg_path) :nh_(nh){
             cfg_ = rog_map::Config(cfg_path);
-            init();
+            init(); //TODO:figure out what this does
             /// Initialize visualization module
             // if (cfg_.visualization_en) {
             //     vm_.occ_pub = nh_.advertise<sensor_msgs::PointCloud2>("rog_map/occ", 1);
