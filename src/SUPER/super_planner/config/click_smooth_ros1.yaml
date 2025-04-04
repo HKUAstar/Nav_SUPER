@@ -11,7 +11,7 @@ fsm:
 super_planner:
   backup_traj_en: true
   detailed_log_en: false
-  visualization_en: true
+  visualization_en: false
   use_fov_cut: false
   print_log: false
   visual_process: false
@@ -142,7 +142,7 @@ rog_map:
 
 
   visualization:
-    enable: true
+    enable: false
     # when enabled, use rqt_reconfigure to change the visualization parameters.
     use_dynamic_reconfigure: false
     # The rate of visualization [Hz], if set to 0, the visualization will not be triggered by frame.
