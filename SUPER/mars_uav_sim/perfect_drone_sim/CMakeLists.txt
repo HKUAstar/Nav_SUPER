@@ -52,3 +52,12 @@ add_executable(perfect_drone
 target_link_libraries(perfect_drone
         ${THIRD_PARTY}
         )
+
+add_executable(real_drone_node
+        src/real_drone_node.cpp
+      )
+      
+target_link_libraries(real_drone_node
+        ${catkin_LIBRARIES}
+        ${PCL_LIBRARIES}
+      )
