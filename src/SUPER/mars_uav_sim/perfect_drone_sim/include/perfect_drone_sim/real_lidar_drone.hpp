@@ -12,6 +12,8 @@
 #include <livox_ros_driver2/CustomMsg.h>
 #include <pcl/filters/voxel_grid.h> 
 #include "perfect_drone_sim/config.hpp"
+#include "nav_msgs/Odometry.h"
+#include "nav_msgs/Path.h"
 
 class RealLidarDrone {
 public:
@@ -31,12 +33,17 @@ public:
         velocity_.setZero();
         yaw_ = cfg_.init_yaw;
         q_ = Eigen::AngleAxisd(yaw_, Eigen::Vector3d::UnitZ());
+        odom_.header.frame_id = "world";
+        path_.poses.clear();
+        path_.header.frame_id = "world";
+        path_.header.stamp = ros::Time::now();
 
         // 初始化发布器
         odom_pub_ = nh_.advertise<nav_msgs::Odometry>("/lidar_slam/odom", 100);
         pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/lidar_slam/pose", 100);
         local_pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/cloud_registered", 100);
         global_pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/global_pc", 100, true); // latch=true
+        path_pub_ = nh_.advertise<nav_msgs::Path>("path", 100);
 
         // 订阅控制指令和Livox点云
         cmd_sub_ = nh_.subscribe("/planning/pos_cmd", 100, &RealLidarDrone::cmdCallback, this);
@@ -57,14 +64,16 @@ public:
 
 private:
     ros::NodeHandle nh_;
+    nav_msgs::Path path_;
     perfect_drone::Config cfg_;
-    ros::Publisher odom_pub_, pose_pub_, local_pc_pub_, global_pc_pub_;
+    ros::Publisher odom_pub_, pose_pub_, local_pc_pub_, global_pc_pub_, path_pub_;
     ros::Subscriber cmd_sub_, livox_sub_;
     ros::Timer odom_pub_timer_;
     
     Eigen::Vector3d position_, velocity_;
     double yaw_;
     Eigen::Quaterniond q_;
+    nav_msgs::Odometry odom_;
     pcl::PointCloud<pcl::PointXYZ>::Ptr global_map_;
 
     void loadGlobalMap() {
@@ -118,7 +127,14 @@ private:
         position_ = pos;
         velocity_ = vel;
         yaw_ = yaw;
-        q_ = Eigen::AngleAxisd(yaw_, Eigen::Vector3d::UnitZ());
+        Eigen::Vector3d gravity_(0, 0, 9.80);
+        Eigen::Vector3d xC(cos(yaw_), sin(yaw_), 0);
+        Eigen::Vector3d zB = (gravity_ + acc).normalized();
+        Eigen::Vector3d yB = (zB.cross(xC)).normalized();
+        Eigen::Vector3d xB = yB.cross(zB);
+        Eigen::Matrix3d R;
+        R << xB, yB, zB;
+        q_ = Eigen::Quaterniond(R);
     }
 
     void publishOdomPose(const ros::TimerEvent& e) {
@@ -158,6 +174,17 @@ private:
         transform.transform.rotation.z = q_.z();
         transform.transform.rotation.w = q_.w();
         br.sendTransform(transform);
+
+        static int slow_down = 0;
+            if (slow_down++ % 10 == 0) {
+                if ((position_.head(2) - Eigen::Vector3d(0, -50, 1.5).head(2)).norm() < 1) {
+                    path_.poses.clear();
+                    path_.poses.reserve(10000);
+                }
+                path_.poses.push_back(pose);
+                path_.header = odom_.header;
+                path_pub_.publish(path_);
+            }
     }
 };
 

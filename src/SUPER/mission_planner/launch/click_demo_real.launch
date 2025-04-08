@@ -20,7 +20,7 @@
         <param name="config_name" value="click_smooth_ros1.yaml" type="string"/>
     </node>
 
-    <!-- <node pkg="rviz" type="rviz" name="top_down" args="-d $(find perfect_drone_sim)/rviz/top_down.rviz" output="log"/> 
-    <node pkg="rviz" type="rviz" name="fpv" args="-d $(find perfect_drone_sim)/rviz/fpv.rviz" output="log"/> -->
+    <node pkg="rviz" type="rviz" name="top_down" args="-d $(find perfect_drone_sim)/rviz/top_down.rviz" output="log"/> 
+    <node pkg="rviz" type="rviz" name="fpv" args="-d $(find perfect_drone_sim)/rviz/fpv.rviz" output="log"/>
 
 </launch>
