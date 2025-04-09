@@ -295,7 +295,8 @@ void geometry_utils::convertFlatOutputToAttAndOmg(const Vec3f& p,
                                                   Vec3f& omg,
                                                   double& aT
 ) {
-    static const Vec3f grav = 9.80f * Vec3f(0, 0, 1);
+    // test change of gravity start
+    static const Vec3f grav = 0.0f * Vec3f(0, 0, 1);
     aT = (grav + a).norm();
     Vec3f xB, yB, zB;
     Vec3f xC(cos(yaw), sin(yaw), 0);

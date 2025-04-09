@@ -1,7 +1,7 @@
 fsm:
   click_goal_en: true
-  click_goal_topic: "/goal"
-  click_height: 1.5
+  click_goal_topic: "/move_base_simple/goal"
+  click_height: 0.5
   click_yaw_en: true
   replan_rate: 15.0
   cmd_topic: "/planning/pos_cmd"
@@ -92,7 +92,8 @@ traj_opt:
     dv: 0.35
     cp: 0.001
     v_eps: 0.0001
-    grav: 9.81
+    # test changes start
+    grav: 0.0
 
 
 astar:
@@ -107,7 +108,7 @@ astar:
 rog_map:
   resolution: 0.1
   inflation_resolution: 0.2
-  inflation_step: 2
+  inflation_step: 1
   unk_inflation_en: false
   unk_inflation_step: 1
   map_size: [ 50,50,6 ]
@@ -116,8 +117,8 @@ rog_map:
   frontier_extraction_en: false
 
   # Virtual ceil and ground
-  virtual_ceil_height: 3.5
-  virtual_ground_height: -0.1
+  virtual_ceil_height: 2.5
+  virtual_ground_height: -0.10
 
   load_pcd_en: false
 

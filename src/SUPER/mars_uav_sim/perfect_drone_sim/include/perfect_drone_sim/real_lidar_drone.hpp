@@ -98,12 +98,16 @@ private:
         
         // 坐标转换 (Livox坐标系到世界坐标系)
         for (const auto& point : msg->points) {
+            float distance = std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
             Eigen::Vector3f p(point.x, point.y, point.z);
             p = q_.cast<float>() * p;  // 旋转到世界系
             p += position_.cast<float>();
+            // 过滤掉距离过近的点
+            if (distance < 0.5) {
+                continue;
+            }
             raw_cloud->points.emplace_back(p.x(), p.y(), p.z());
         }
-        
         // 下采样 (使用配置参数)
         pcl::PointCloud<pcl::PointXYZ>::Ptr filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::VoxelGrid<pcl::PointXYZ> voxel;
@@ -124,9 +128,9 @@ private:
         Eigen::Vector3d acc(msg->acceleration.x, msg->acceleration.y, msg->acceleration.z);
         double yaw = msg->yaw;
         
-        position_ = pos;
-        velocity_ = vel;
-        yaw_ = yaw;
+        // position_ = pos;
+        // velocity_ = vel;
+        // yaw_ = yaw;
         Eigen::Vector3d gravity_(0, 0, 9.80);
         Eigen::Vector3d xC(cos(yaw_), sin(yaw_), 0);
         Eigen::Vector3d zB = (gravity_ + acc).normalized();
@@ -134,7 +138,7 @@ private:
         Eigen::Vector3d xB = yB.cross(zB);
         Eigen::Matrix3d R;
         R << xB, yB, zB;
-        q_ = Eigen::Quaterniond(R);
+        // q_ = Eigen::Quaterniond(R);
     }
 
     void publishOdomPose(const ros::TimerEvent& e) {
@@ -143,18 +147,32 @@ private:
         odom.header.frame_id = "world";
         odom.child_frame_id = "perfect_drone";
         
-        odom.pose.pose.position.x = position_.x();
-        odom.pose.pose.position.y = position_.y();
-        odom.pose.pose.position.z = position_.z();
-        odom.pose.pose.orientation.x = q_.x();
-        odom.pose.pose.orientation.y = q_.y();
-        odom.pose.pose.orientation.z = q_.z();
-        odom.pose.pose.orientation.w = q_.w();
+        // odom.pose.pose.position.x = position_.x();
+        // odom.pose.pose.position.y = position_.y();
+        // odom.pose.pose.position.z = position_.z();
+        // odom.pose.pose.orientation.x = q_.x();
+        // odom.pose.pose.orientation.y = q_.y();
+        // odom.pose.pose.orientation.z = q_.z();
+        // odom.pose.pose.orientation.w = q_.w();
         
-        odom.twist.twist.linear.x = velocity_.x();
-        odom.twist.twist.linear.y = velocity_.y();
-        odom.twist.twist.linear.z = velocity_.z();
+        // odom.twist.twist.linear.x = velocity_.x();
+        // odom.twist.twist.linear.y = velocity_.y();
+        // odom.twist.twist.linear.z = velocity_.z();
+
+        // test code begin
+        odom.pose.pose.position.x = 0.0;
+        odom.pose.pose.position.y = 0.0;
+        odom.pose.pose.position.z = 1.5;
+        odom.pose.pose.orientation.x = 0.0;
+        odom.pose.pose.orientation.y = 0.0;
+        odom.pose.pose.orientation.z = 0.0;
+        odom.pose.pose.orientation.w = 1.0;
         
+        odom.twist.twist.linear.x = 0.0;
+        odom.twist.twist.linear.y = 0.0;
+        odom.twist.twist.linear.z = 0.0;
+        // test code end
+
         odom_pub_.publish(odom);
         
         geometry_msgs::PoseStamped pose;
@@ -166,13 +184,22 @@ private:
         geometry_msgs::TransformStamped transform;
         transform.header = odom.header;
         transform.child_frame_id = "perfect_drone";
-        transform.transform.translation.x = position_.x();
-        transform.transform.translation.y = position_.y();
-        transform.transform.translation.z = position_.z();
-        transform.transform.rotation.x = q_.x();
-        transform.transform.rotation.y = q_.y();
-        transform.transform.rotation.z = q_.z();
-        transform.transform.rotation.w = q_.w();
+        // transform.transform.translation.x = position_.x();
+        // transform.transform.translation.y = position_.y();
+        // transform.transform.translation.z = position_.z();
+        // transform.transform.rotation.x = q_.x();
+        // transform.transform.rotation.y = q_.y();
+        // transform.transform.rotation.z = q_.z();
+        // transform.transform.rotation.w = q_.w();
+        // test code begin
+        transform.transform.translation.x = 0.0;
+        transform.transform.translation.y = 0.0;
+        transform.transform.translation.z = 0.0;
+        transform.transform.rotation.x = 0.0;
+        transform.transform.rotation.y = 0.0;
+        transform.transform.rotation.z = 0.0;
+        transform.transform.rotation.w = 1.0;
+        // test code end
         br.sendTransform(transform);
 
         static int slow_down = 0;
