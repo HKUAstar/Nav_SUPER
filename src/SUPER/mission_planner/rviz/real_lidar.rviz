@@ -75,7 +75,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /cloud_registered
+      Topic: /cloud_registered1
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true

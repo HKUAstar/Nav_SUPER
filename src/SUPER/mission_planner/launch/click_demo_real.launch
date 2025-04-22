@@ -20,9 +20,11 @@
         <param name="config_name" value="click_smooth_ros1.yaml" type="string"/>
     </node>
 
-    <include file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch">
+    <include file="$(find point_lio)/launch/mapping_avia.launch">
         <!-- Add any necessary arguments or parameters here -->
     </include>
+
+    <!-- <include file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch"> </include> -->
 
     <!-- Launch RViz with custom configuration -->
     <node pkg="rviz" type="rviz" name="real_rviz" args="-d $(find mission_planner)/rviz/real_lidar.rviz" output="log"/>

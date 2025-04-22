@@ -79,6 +79,7 @@ namespace super_utils{
 
     struct RobotState {
         Vec3f p, v, a, j;
+        //Vec3f prevPos = Vec3f::Zero();
         double yaw;
         double rcv_time;
         bool rcv{false};

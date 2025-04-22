@@ -34,6 +34,7 @@ void ROGMap::init() {
 
 
     robot_state_.p = cfg_.fix_map_origin;
+    ROS_INFO(" -- [ROGMap] Fix map origin: x = %f, y = %f, z = %f", robot_state_.p.x(), robot_state_.p.y(), robot_state_.p.z());
 
     if (cfg_.map_sliding_en) {
         mapSliding(Vec3f(0, 0, 0));

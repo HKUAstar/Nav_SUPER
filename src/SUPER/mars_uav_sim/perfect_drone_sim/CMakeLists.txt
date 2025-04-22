@@ -24,10 +24,13 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Eigen3 REQUIRED)
 find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+
 catkin_package(
         INCLUDE_DIRS include
         LIBRARIES
-        CATKIN_DEPENDS roscpp rospy std_msgs livox_ros_driver2
+        CATKIN_DEPENDS roscpp rospy std_msgs livox_ros_driver2 tf2 tf2_ros
         #  DEPENDS system_lib
 )
 
@@ -38,8 +41,12 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
         ${Eigen3_INCLUDE_DIRS}
         ${PCL_INCLUDE_DIRS}
+        ${tf2_INCLUDE_DIRS}
+        ${tf2_ros_INCLUDE_DIRS}
         ~/driver/ws_livox/src/livox_ros_driver2/include
 )
+
+link_directories(/opt/ros/noetic/lib)
 
 set(THIRD_PARTY
         ${catkin_LIBRARIES}
@@ -53,6 +60,8 @@ add_executable(perfect_drone
         )
 target_link_libraries(perfect_drone
         ${THIRD_PARTY}
+        tf2
+        tf2_ros
         )
 
 add_executable(real_drone_node
@@ -62,4 +71,6 @@ add_executable(real_drone_node
 target_link_libraries(real_drone_node
         ${catkin_LIBRARIES}
         ${PCL_LIBRARIES}
+        tf2
+        tf2_ros
       )
